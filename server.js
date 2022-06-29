@@ -1,25 +1,33 @@
+const Contenedor = require("./mainfinal");
 
-const express = require('express')
-const app = express()
-const PORT = process.env.PORT || 8080
-let visitas=0  
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 8080;
 
-app.get('/', (request,response)=>{
-    response.send({mensaje:'Saludos a mi amigo Martin!'})
-})
+let contenedor = new Contenedor("productos.txt");
 
 
-app.get('/visita',(req,res)=>{
+function randomFun (min,max)
+{ 
+  return Math.floor(Math.random()* (max - min) + min);
   
-visitas++
-res.send(`Este sitio tuvo${visitas} totales`)
-})
+}
+
+resRandom = randomFun(2,3);
 
 
+app.get("/productos", async (request, response) => {
+  await contenedor.init();
+  response.json(contenedor.getAll());
+});
 
+app.get("/productosRandom", async (request, response) => {
+  await contenedor.init();
+  response.json(contenedor.getById(resRandom));
+});
 
-const server = app.listen(PORT,()=>{
-    console.log(`Server Listenig [${PORT}]...`);
-})
+const server = app.listen(PORT, () => {
+  console.log(`Server Listenig [${PORT}]...`);
+});
 
-server.on('error', e=>console.log(`Error On Server`,e))
+server.on("error", (e) => console.log(`Error On Server`, e));
